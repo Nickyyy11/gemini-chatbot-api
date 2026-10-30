@@ -1,18 +1,45 @@
 const form = document.getElementById('chat-form');
 const input = document.getElementById('user-input');
 const chatBox = document.getElementById('chat-box');
-const submitButton = form.querySelector('button[type="submit"]');
+const submitButton = document.getElementById('send-button');
+const quickPrompts = document.getElementById('quick-prompts');
 
 const conversation = [];
+let isProcessing = false;
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
+  await sendMessage(input.value);
+});
 
-  const userMessage = input.value.trim();
-  if (!userMessage || submitButton.disabled) return;
+input.addEventListener('input', () => {
+  resizeInput();
+  updateSendButton();
+});
+
+input.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+    event.preventDefault();
+    if (!submitButton.disabled) form.requestSubmit();
+  }
+});
+
+quickPrompts.addEventListener('click', (event) => {
+  const prompt = event.target.closest('.quick-prompt');
+  if (prompt && !isProcessing) sendMessage(prompt.textContent);
+});
+
+async function sendMessage(text) {
+  const userMessage = text.trim();
+  if (!userMessage || isProcessing) return;
+
+  isProcessing = true;
+  updateSendButton();
+  quickPrompts.hidden = true;
 
   appendMessage('user', userMessage);
   input.value = '';
+  resizeInput();
 
   const thinkingMessage = appendTypingMessage();
   const requestConversation = [
@@ -20,22 +47,23 @@ form.addEventListener('submit', async (event) => {
     { role: 'user', text: userMessage },
   ];
 
-  submitButton.disabled = true;
-
   try {
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ conversation: requestConversation }),
     });
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
-      throw new Error(`Chat request failed with status ${response.status}`);
+      const detail = data && typeof data.error === 'string'
+        ? data.error
+        : `HTTP ${response.status}`;
+      throw new Error(detail);
     }
 
-    const data = await response.json();
     if (!data || typeof data.result !== 'string' || !data.result.trim()) {
-      showMessageText(thinkingMessage, 'Sorry, no response received.');
+      showMessageText(thinkingMessage, 'Maaf, belum ada jawaban. Silakan coba kembali.');
       return;
     }
 
@@ -51,24 +79,35 @@ form.addEventListener('submit', async (event) => {
     );
   } catch (error) {
     console.error('Failed to get response from server:', error);
-    showMessageText(thinkingMessage, 'Failed to get response from server.');
+    showMessageText(thinkingMessage, 'Maaf, terjadi kendala saat menghubungi asisten. Silakan coba kembali.');
   } finally {
-    submitButton.disabled = false;
+    isProcessing = false;
+    updateSendButton();
     input.focus();
     chatBox.scrollTop = chatBox.scrollHeight;
   }
-});
+}
 
 function appendMessage(sender, text) {
+  const row = document.createElement('div');
+  row.classList.add('message-row', `${sender}-row`);
+
+  if (sender === 'bot') row.appendChild(createBotAvatar());
+
   const message = document.createElement('div');
   message.classList.add('message', sender);
   message.textContent = text;
-  chatBox.appendChild(message);
+  row.appendChild(message);
+  chatBox.appendChild(row);
   chatBox.scrollTop = chatBox.scrollHeight;
   return message;
 }
 
 function appendTypingMessage() {
+  const row = document.createElement('div');
+  row.classList.add('message-row', 'bot-row');
+  row.appendChild(createBotAvatar());
+
   const message = document.createElement('div');
   message.classList.add('message', 'bot', 'typing');
   message.setAttribute('role', 'status');
@@ -86,9 +125,23 @@ function appendTypingMessage() {
   }
   message.appendChild(dots);
 
-  chatBox.appendChild(message);
+  row.appendChild(message);
+  chatBox.appendChild(row);
   chatBox.scrollTop = chatBox.scrollHeight;
   return message;
+}
+
+function createBotAvatar() {
+  return document.querySelector('.bot-avatar').cloneNode(true);
+}
+
+function resizeInput() {
+  input.style.height = 'auto';
+  input.style.height = `${Math.min(input.scrollHeight, 140)}px`;
+}
+
+function updateSendButton() {
+  submitButton.disabled = isProcessing || !input.value.trim();
 }
 
 function showMessageText(message, text) {

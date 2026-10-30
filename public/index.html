@@ -2,19 +2,78 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gemini AI Chat</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f0fdf4" />
+  <title>SuhadaBot — AI Delivery Assistant</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Gemini AI Chatbot</h1>
-    <div id="chat-box" class="chat-box"></div>
-    <form id="chat-form">
-      <input type="text" id="user-input" placeholder="Tulis pesan..." autocomplete="off" required />
-      <button type="submit">Kirim</button>
-    </form>
-  </div>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-avatar" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <path d="M5 13.5A3.5 3.5 0 0 1 8.5 10h19a3.5 3.5 0 0 1 3.5 3.5V30H5V13.5Z" fill="currentColor" />
+            <path d="M31 18h7.2c1.1 0 2.1.5 2.8 1.4l4 5.2V30H31V18Z" fill="currentColor" opacity=".78" />
+            <path d="M35 21v5h6.2l-3.5-4.5a1 1 0 0 0-.8-.5H35Z" fill="white" />
+            <path d="M9 34a4 4 0 1 0 8 0 4 4 0 0 0-8 0Zm22 0a4 4 0 1 0 8 0 4 4 0 0 0-8 0Z" fill="#15803D" stroke="white" stroke-width="2" />
+            <path d="M5 30h40v2a2 2 0 0 1-2 2h-4a4 4 0 0 0-8 0H17a4 4 0 0 0-8 0H7a2 2 0 0 1-2-2v-2Z" fill="currentColor" />
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <div class="brand-name">SuhadaBot</div>
+          <div class="brand-subtitle">AI Delivery Assistant</div>
+        </div>
+      </div>
+      <div class="assistant-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Asisten Virtual Siap Membantu</span>
+      </div>
+    </header>
+
+    <section id="chat-box" class="chat-box" aria-label="Percakapan dengan SuhadaBot" aria-live="polite">
+      <div class="welcome-content">
+        <div class="message-row bot-row">
+          <div class="bot-avatar" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none">
+              <path d="M5 13.5A3.5 3.5 0 0 1 8.5 10h19a3.5 3.5 0 0 1 3.5 3.5V30H5V13.5Z" fill="currentColor" />
+              <path d="M31 18h7.2c1.1 0 2.1.5 2.8 1.4l4 5.2V30H31V18Z" fill="currentColor" opacity=".78" />
+              <path d="M35 21v5h6.2l-3.5-4.5a1 1 0 0 0-.8-.5H35Z" fill="white" />
+              <path d="M9 34a4 4 0 1 0 8 0 4 4 0 0 0-8 0Zm22 0a4 4 0 1 0 8 0 4 4 0 0 0-8 0Z" fill="#15803D" stroke="white" stroke-width="2" />
+              <path d="M5 30h40v2a2 2 0 0 1-2 2h-4a4 4 0 0 0-8 0H17a4 4 0 0 0-8 0H7a2 2 0 0 1-2-2v-2Z" fill="currentColor" />
+            </svg>
+          </div>
+          <div class="message bot welcome-message">
+            <p>Halo! Selamat datang di Suhada Delivery. 👋</p>
+            <p>Saya SuhadaBot, asisten virtual yang siap membantu Anda mendapatkan informasi seputar layanan pengiriman barang.</p>
+            <p>Apa yang ingin Anda ketahui hari ini?</p>
+          </div>
+        </div>
+        <div id="quick-prompts" class="quick-prompts" aria-label="Pertanyaan yang sering diajukan">
+          <span class="quick-prompts-label">Mulai dengan bertanya</span>
+          <button type="button" class="quick-prompt">Layanan apa saja yang tersedia?</button>
+          <button type="button" class="quick-prompt">Bagaimana cara mengirim barang?</button>
+          <button type="button" class="quick-prompt">Bagaimana cara menghubungi admin?</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="composer">
+      <form id="chat-form">
+        <label class="sr-only" for="user-input">Tulis pesan untuk SuhadaBot</label>
+        <textarea id="user-input" rows="1" placeholder="Tulis pesan Anda..." autocomplete="off"></textarea>
+        <button type="submit" id="send-button" aria-label="Kirim pesan" disabled>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 3 10.8 13.2M21 3l-6.5 18-3.7-7.3L3.5 10 21 3Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span class="sr-only">Kirim</span>
+        </button>
+      </form>
+      <div class="input-hint">Enter untuk mengirim <span aria-hidden="true">·</span> Shift+Enter untuk baris baru</div>
+    </div>
+
+    <footer class="app-footer">Suhada Delivery <span aria-hidden="true">•</span> AI Assistant</footer>
+  </main>
   <script src="script.js"></script>
 </body>
 </html>
