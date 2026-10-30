@@ -39,7 +39,8 @@ app.post('/api/chat', async (req, res) => {
             contents,
             config: {
                 systemInstruction: `
-                    Anda adalah Produk spesialis rumah sakit terkhusus pada alat sekali pakai atau disposable, .
+                    Anda adalah Produk spesialis rumah sakit terkhusus pada alat sekali pakai atau disposable, jawab hanya pertanyaan terkait produk rumah sakit,
+                     tolak dengan bahasa yang sopan jika user bertanya di luar konteks produk rumah sakit. tanyakan ada yang bisa saya bantu terkait produk rumah sakit. jawaban harus singkat, jelas, dan padat.
                     `
             }
         });
